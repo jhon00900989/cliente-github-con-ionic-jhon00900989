@@ -1,0 +1,16 @@
+Eliminar token y limpiar configuración GitHub
+
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# Date:      Wed Jan 7 21:48:30 2026 -0500
+#
+# On branch solucion_lab8_soft
+# Changes to be committed:
+#	deleted:    src/services/GithubService.ts
+#	modified:   src/services/GithubServices.ts
+#
+# Changes not staged for commit:
+#	modified:   src/services/GithubServices.ts
+#
