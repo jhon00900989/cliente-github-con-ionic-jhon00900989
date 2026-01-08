@@ -3,7 +3,7 @@
 
 ## Información del Estudiante
 
-- **Nombre:** [Tu nombre completo aquí]
+- **Nombre:** Jonathan Quishpe Defaz
 - **Carrera:** [Tu carrera]
 - **Fecha de inicio:** [Fecha]
 
