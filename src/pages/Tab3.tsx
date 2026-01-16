@@ -1,10 +1,38 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { useState } from 'react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, useIonViewDidEnter } from '@ionic/react';
 import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle } from '@ionic/react';
+import { getUserInfo } from "../services/GithubServices";
 import './Tab3.css';
 
+
 const Tab3: React.FC = () => {
+
+  const [userInfo, setUserInfo] = useState({
+    name: 'No se puede cargar el usuario',
+    username: 'no-username',
+    bio: 'No se puede cargar la biografía',
+    avatar_url: 'https://ionicframework.com/docs/img/demos/card-media.png',
+  });
+
+  const loadUserInfo = async () => {
+    const response = await getUserInfo();
+    if (response) {
+      setUserInfo({
+        name: response.name,
+        username: response.login,
+        bio: response.bio ?? 'Sin biografía',
+        avatar_url: response.avatar_url,
+      });
+    }
+  };
+
+  useIonViewDidEnter(() => {
+    loadUserInfo();
+  });
+
   return (
     <IonPage>
+
       <IonHeader>
         <IonToolbar>
           <IonTitle>Perfil de Usuario</IonTitle>
@@ -12,28 +40,36 @@ const Tab3: React.FC = () => {
       </IonHeader>
 
       <IonContent fullscreen>
+
         <IonHeader collapse="condense">
           <IonToolbar>
             <IonTitle size="large">Perfil de Usuario</IonTitle>
           </IonToolbar>
         </IonHeader>
 
-        <IonCard>
-          <img
-            alt="Jonathan Quishpe"
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxu6rotIySGCM5SkVZZbwH2k9PeYovy3hn4Q&s"
-          />
+        <div className="card-container">
 
-          <IonCardHeader>
-            <IonCardTitle>Jonathan Quishpe</IonCardTitle>
-            <IonCardSubtitle>jonathanQD250</IonCardSubtitle>
-          </IonCardHeader>
+          <IonCard className="card">
+            <img
+              alt="Silhouette of mountains"
+              src={userInfo.avatar_url}
+            />
 
-          <IonCardContent>
-            Soy un estudiante de la carrera de Ingeniería en Sistemas de la Universidad UISEK. Me gusta aprender sobre desarrollo web y móvil, así como sobre nuevas tecnologías en el campo de la informática.
-          </IonCardContent>
-        </IonCard>
+            <IonCardHeader>
+              <IonCardTitle>{userInfo.name}</IonCardTitle>
+              <IonCardSubtitle>{userInfo.username}</IonCardSubtitle>
+            </IonCardHeader>
+
+            <IonCardContent>
+              {userInfo.bio}
+            </IonCardContent>
+
+          </IonCard>
+
+        </div>
+
       </IonContent>
+
     </IonPage>
   );
 };
