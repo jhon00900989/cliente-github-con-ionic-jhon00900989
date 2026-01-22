@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   IonButton,
   IonContent,
@@ -6,9 +7,9 @@ import {
   IonTextarea,
   IonTitle,
   IonToolbar,
+  IonInput,
 } from '@ionic/react';
-import { IonInput } from '@ionic/react';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { RepositoryItem } from '../interfaces/RepositoryItem';
 import { createRepository } from '../services/GithubService';
 import './Tab2.css';
@@ -16,37 +17,27 @@ import './Tab2.css';
 const Tab2: React.FC = () => {
   const history = useHistory();
 
-  const repoFormData: RepositoryItem = {
+  const [repoFormData, setRepoFormData] = useState<RepositoryItem>({
     name: '',
     description: '',
     imageUrl: null,
     owner: null,
     language: null,
-  };
+  });
 
-  const setRepoName = (value: string) => {
-    repoFormData.name = value;
-  };
-
-  const setDescription = (value: string) => {
-    repoFormData.description = value;
-  };
-
-  const saveRepo = () => {
-    console.log('Guardando repositorio:', repoFormData);
-    if (repoFormData.name.trim() === '') {
+  const saveRepo = async () => {
+    if (!repoFormData.name?.trim()) {
       alert('El nombre del repositorio es obligatorio');
       return;
     }
 
-    createRepository(repoFormData)
-      .then(() => {
-        history.push('/tab1');
-      })
-      .catch((error) => {
-        console.error('Error al crear el repositorio:', error);
-        alert('Error al crear el repositorio');
-      });
+    try {
+      await createRepository(repoFormData);
+      history.push('/tab1');
+    } catch (error) {
+      console.error('Error al crear el repositorio:', error);
+      alert('Error al crear el repositorio');
+    }
   };
 
   return (
@@ -60,9 +51,7 @@ const Tab2: React.FC = () => {
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">
-              Formulario de repositorio
-            </IonTitle>
+            <IonTitle size="large">Formulario de repositorio</IonTitle>
           </IonToolbar>
         </IonHeader>
 
@@ -75,7 +64,10 @@ const Tab2: React.FC = () => {
             placeholder="android-project"
             value={repoFormData.name}
             onIonChange={(e) =>
-              setRepoName(e.detail.value!)
+              setRepoFormData((prev) => ({
+                ...prev,
+                name: e.detail.value ?? '',
+              }))
             }
           />
 
@@ -85,19 +77,18 @@ const Tab2: React.FC = () => {
             labelPlacement="floating"
             fill="outline"
             placeholder="Descripción del repositorio"
-            value={repoFormData.description}
+            value={repoFormData.description ?? ''}
             onIonChange={(e) =>
-              setDescription(e.detail.value!)
+              setRepoFormData((prev) => ({
+                ...prev,
+                description: e.detail.value ?? '',
+              }))
             }
             rows={6}
             autoGrow
           />
 
-          <IonButton
-            expand="block"
-            className="form-field"
-            onClick={saveRepo}
-          >
+          <IonButton expand="block" className="form-field" onClick={saveRepo}>
             Guardar
           </IonButton>
         </div>
