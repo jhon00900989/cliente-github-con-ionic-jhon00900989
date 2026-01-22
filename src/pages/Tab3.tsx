@@ -42,7 +42,7 @@ const Tab3: React.FC = () => {
         avatar_url: response.avatar_url,
       });
     }
-  };
+  }
 
   const handleLogout = () => {
     AuthService.logout();
