@@ -1,79 +1,71 @@
-import axios from "axios";
-import { RepositoryItem } from "../interfaces/RepositoryItem";
-import { UserInfo } from "../interfaces/UserInfo";
-import AuthService from "./AuthService";
+import githubApi from "./githubApi";
 
-const GITHUB_API_URL = import.meta.env.VITE_GITHUB_API_URL;
-// const GITHUB_API_TOKEN = `Bearer ${import.meta.env.VITE_GITHUB_API_TOKEN}`;
+export interface GitHubUser {
+  login: string;
+  name?: string | null;
+  avatar_url: string;
+  html_url: string;
+  public_repos: number;
+  followers: number;
+  following: number;
+}
 
-const githubApi = axios.create({
-  baseURL: GITHUB_API_URL,
-});
+export interface GitHubRepo {
+  id: number;
+  name: string;
+  full_name: string;
+  private: boolean;
+  description?: string | null;
+  html_url: string;
+  owner: { login: string };
+  updated_at: string;
+}
 
-githubApi.interceptors.request.use(
-  (config) => {
-    const authHeader = AuthService.getAuthHeader();
-    if (authHeader) {
-      config.headers.Authorization = authHeader;
-    }
-    return config;
+export interface CreateRepoPayload {
+  name: string;
+  description?: string;
+  private?: boolean;
+}
+
+export interface UpdateRepoPayload {
+  name?: string;        // OJO: renombrar repo cambia el "repo" en la URL futura
+  description?: string;
+  homepage?: string;
+  private?: boolean;
+  has_issues?: boolean;
+  has_projects?: boolean;
+  has_wiki?: boolean;
+}
+
+export const GitHubService = {
+  // GET /user
+  getMe: async () => {
+    const { data } = await githubApi.get<GitHubUser>("/user");
+    return data;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
-/**
- * Obtener repositorios del usuario autenticado
- * @returns
- */
-export const fetchRepositories = async (): Promise<RepositoryItem[]> => {
-  try {
-    const response = await githubApi.get("/user/repos", {
-      params: {
-        per_page: 100,
-        sort: "created",
-        direction: "desc",
-        affiliation: "owner",
-      },
-    });
+  // GET /user/repos
+  getMyRepos: async () => {
+    const { data } = await githubApi.get<GitHubRepo[]>("/user/repos");
+    return data;
+  },
 
-    const repositories: RepositoryItem[] = response.data.map((repo: any) => ({
-      name: repo.name,
-      owner: repo.owner ? repo.owner.login : null,
-      description: repo.description ? repo.description : null,
-      imageUrl: repo.owner ? repo.owner.avatar_url : null,
-      language: repo.language ? repo.language : null,
-    }));
+  // POST /user/repos
+  createRepo: async (payload: CreateRepoPayload) => {
+    const { data } = await githubApi.post<GitHubRepo>("/user/repos", payload);
+    return data;
+  },
 
-    return repositories;
-  } catch (error) {
-    console.error("Error fetching repositories:", error);
-    return [];
-  }
-};
+  // “PUT” (realmente GitHub usa PATCH) /repos/{owner}/{repo}
+  // Para cumplir el enunciado, puedes llamarlo putUpdateRepo() aunque envía PATCH.
+  putUpdateRepo: async (owner: string, repo: string, payload: UpdateRepoPayload) => {
+    const { data } = await githubApi.patch<GitHubRepo>(`/repos/${owner}/${repo}`, payload);
+    return data;
+  },
 
-export const createRepository = async (
-  repo: RepositoryItem
-): Promise<void> => {
-  try {
-    const response = await githubApi.post("/user/repos", repo);
-    console.log("Repository creado:", response.data);
-  } catch (error) {
-    console.error("Error creando repository:", error);
-  }
-};
-
-/**
- * Obtener información del usuario autenticado
- * @returns
- */
-export const getUserInfo = async (): Promise<UserInfo | null> => {
-  try {
-    const response = await githubApi.get("/user");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching user info:", error);
-    return null;
-  }
+  // DELETE /repos/{owner}/{repo}
+  deleteRepo: async (owner: string, repo: string) => {
+    await githubApi.delete(`/repos/${owner}/${repo}`);
+    return true;
+  },
 };
