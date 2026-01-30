@@ -1,5 +1,5 @@
 import { IonSpinner } from "@ionic/react";  
-import '/LoadingSpinner.css';
+import "./LoadingSpinner.css";
 
 interface loadingSpinnerProps{
     isOpen : boolean;
