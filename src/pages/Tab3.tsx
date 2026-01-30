@@ -1,29 +1,17 @@
 import { useState } from 'react';
-import {
-  IonButton,
-  IonContent,
-  IonHeader,
-  IonIcon,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  useIonViewDidEnter,
-} from '@ionic/react';
-import {
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
-} from '@ionic/react';
+import { IonButton, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar, useIonViewDidEnter,} from '@ionic/react';
+import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle,} from '@ionic/react';
 import { getUserInfo } from '../services/GithubService';
 import './Tab3.css';
 import AuthService from '../services/AuthService';
 import { useHistory } from 'react-router';
 import { logOutOutline } from 'ionicons/icons';
+import LoadingSpinner from "../components/LoadingSpinner";
+
 
 const Tab3: React.FC = () => {
   const history = useHistory();
+  const [loading, setLoading]= useState(false);
 
   const [userInfo, setUserInfo] = useState({
     name: 'No se puede cargar el usuario',
@@ -33,6 +21,7 @@ const Tab3: React.FC = () => {
   });
 
   const loadUserInfo = async () => {
+    setLoading(true);
     const response = await getUserInfo();
     if (response) {
       setUserInfo({
@@ -42,6 +31,7 @@ const Tab3: React.FC = () => {
         avatar_url: response.avatar_url,
       });
     }
+    setLoading(false);
   }
 
   const handleLogout = () => {
@@ -70,7 +60,7 @@ const Tab3: React.FC = () => {
 
         <div className="card-container">
           <IonCard className="card">
-            <img alt="Silhouette of mountains" src={userInfo.avatar_url} />
+            <img alt="Silhouette of mountains" src= "https://ionicframework.com/docs/img/demos/card-media.png" />
             <IonCardHeader>
               <IonCardTitle>{userInfo.name}</IonCardTitle>
               <IonCardSubtitle>{userInfo.username} </IonCardSubtitle>
@@ -83,6 +73,7 @@ const Tab3: React.FC = () => {
             cerrar sesión
           </IonButton>
         </div>
+        <LoadingSpinner isOpen={loading}/>
       </IonContent>
     </IonPage>
   );

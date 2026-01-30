@@ -1,24 +1,23 @@
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  useIonViewDidEnter,
-} from '@ionic/react';
-import { IonList } from '@ionic/react';
+import React, { useState } from 'react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, useIonViewDidEnter,} from '@ionic/react';
 import './Tab1.css';
 import RepoItem from '../components/RepoItem';
-import React from 'react';
 import { RepositoryItem } from '../interfaces/RepositoryItem';
 import { fetchRepositories } from '../services/GithubService';
+import LoadingSpinner from "../components/LoadingSpinner";
+
+
 
 const Tab1: React.FC = () => {
-  const [repos, setRepos] = React.useState<RepositoryItem[]>([]);
+  const [repos, setRepos] = useState<RepositoryItem[]>([]);
+  const [loading, setLoading] = React.useState (false);
+
 
   const loadRepos = async () => {
+    setLoading(true);
     const reposData = await fetchRepositories();
     setRepos(reposData);
+    setLoading(false);
   };
 
   useIonViewDidEnter(() => {
@@ -46,6 +45,7 @@ const Tab1: React.FC = () => {
             <RepoItem key={index} repo={repo} />
           ))}
         </IonList>
+        <LoadingSpinner isOpen={loading} />
       </IonContent>
     </IonPage>
   );

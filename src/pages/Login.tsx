@@ -48,7 +48,7 @@ const Login: React.FC = () => {
         <div className="login-container">
           <IonIcon icon={logoGithub} className="login-logo"></IonIcon>
           <h1>Iniciar sesión con GitHub</h1>
-          <form onSubmit={handleLogin} className="login-form" >
+          <form onSubmit={handleLogin} className="login-form">
             <IonInput
               className="login-field"
               label="Usuario de Github"
@@ -73,8 +73,7 @@ const Login: React.FC = () => {
 
             {error &&(
               <IonText color="danger" className="error-message"> {error} </IonText>
-            )
-            }
+            )}
 
             <IonButton expand="block" type="submit">
               Iniciar sesión

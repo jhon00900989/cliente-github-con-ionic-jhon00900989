@@ -8,7 +8,6 @@ class AuthService {
       localStorage.setItem(USERNAME_KEY, username);
       localStorage.setItem(TOKEN_KEY, token);
 
-      window.dispatchEvent(new Event("auth_changed")); // ✅
       return true;
     }
     return false;
@@ -17,15 +16,10 @@ class AuthService {
   logout(): void {
     localStorage.removeItem(USERNAME_KEY);
     localStorage.removeItem(TOKEN_KEY);
-
-    window.dispatchEvent(new Event("auth_changed")); // ✅
   }
 
   isAuthenticated(): boolean {
-    return (
-      localStorage.getItem(TOKEN_KEY) !== null &&
-      localStorage.getItem(USERNAME_KEY) !== null
-    );
+    return localStorage.getItem(TOKEN_KEY) !== null && localStorage.getItem(USERNAME_KEY) !== null;
   }
 
   getToken(): string | null {
@@ -36,10 +30,11 @@ class AuthService {
     return localStorage.getItem(USERNAME_KEY);
   }
 
-  getAuthHeader(): string | null {
+  getAuthHeader() {
     const token = this.getToken();
-    if (token) {
-      return `Bearer ${token}`;
+    const username = this.getUsername();
+    if (token && username) {
+      return "Basic " + btoa(`${username}:${token}`);
     }
     return null;
   }

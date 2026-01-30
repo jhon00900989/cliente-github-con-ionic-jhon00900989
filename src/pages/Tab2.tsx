@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+
 import {
   IonButton,
   IonContent,
@@ -11,33 +11,47 @@ import {
 } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import { RepositoryItem } from '../interfaces/RepositoryItem';
-import { createRepository } from '../services/GithubService';
 import './Tab2.css';
+import { creareRepository } from '../services/GithubService';
+import { useState } from 'react';
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Tab2: React.FC = () => {
+  const [loading, setLoading]= useState(false);
   const history = useHistory();
 
-  const [repoFormData, setRepoFormData] = useState<RepositoryItem>({
+  const repoFormData : RepositoryItem ={
     name: '',
     description: '',
     imageUrl: null,
     owner: null,
     language: null,
-  });
+  };
+  const setRepoName = (value: string) =>{
+    repoFormData.name =  value;
+   }
 
-  const saveRepo = async () => {
-    if (!repoFormData.name?.trim()) {
+  
+  function setDescription(value: string): void {
+    repoFormData.description=value;;
+  }
+
+  const saveRepo = ()=>{
+    setLoading(true);
+    console.log('Guardando repositorio:', repoFormData);
+    if(repoFormData.name.trim()==''){
       alert('El nombre del repositorio es obligatorio');
       return;
     }
-
-    try {
-      await createRepository(repoFormData);
-      history.push('/tab1');
-    } catch (error) {
-      console.error('Error al crear el repositorio:', error);
+    creareRepository(repoFormData).then(() =>{
+      history.push ('/tab1');
+    }).catch((error)=>{
+      console.error('Error al crear el repositorio:',error);
       alert('Error al crear el repositorio');
-    }
+
+    }). finally(()=>{
+      setLoading(false);
+    });   
   };
 
   return (
@@ -63,35 +77,22 @@ const Tab2: React.FC = () => {
             fill="outline"
             placeholder="android-project"
             value={repoFormData.name}
-            onIonChange={(e) =>
-              setRepoFormData((prev) => ({
-                ...prev,
-                name: e.detail.value ?? '',
-              }))
-            }
-          />
-
-          <IonTextarea
+            onIonChange={e =>  setRepoName(e.detail.value!)}
+            ></IonInput>
+            <IonTextarea    
             className="form-field"
             label="Descripción del repositorio"
             labelPlacement="floating"
             fill="outline"
             placeholder="Descripción del repositorio"
-            value={repoFormData.description ?? ''}
-            onIonChange={(e) =>
-              setRepoFormData((prev) => ({
-                ...prev,
-                description: e.detail.value ?? '',
-              }))
-            }
+            value={repoFormData.description}
+            onIonChange={e => setDescription(e.detail.value!)}
             rows={6}
             autoGrow
-          />
-
-          <IonButton expand="block" className="form-field" onClick={saveRepo}>
-            Guardar
-          </IonButton>
+            ></IonTextarea>
+          <IonButton expand="block" className="form-field"onClick={saveRepo}>Guardar</IonButton>
         </div>
+        <LoadingSpinner isOpen={loading} />
       </IonContent>
     </IonPage>
   );
