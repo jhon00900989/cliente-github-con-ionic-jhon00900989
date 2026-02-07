@@ -8,8 +8,8 @@ import {
   IonText,
   IonTitle,
   IonToolbar,
-} from '@ionic/react';
-import './Login.css';
+} from "@ionic/react";
+import "./Login.css";
 import { logoGithub } from 'ionicons/icons';
 import { useState } from 'react';
 import AuthService from '../services/AuthService';

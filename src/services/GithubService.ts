@@ -5,6 +5,7 @@ import AuthService from "./AuthService";
 
 const GITHUB_API_URL = import.meta.env.VITE_GITHUB_API_URL;
 
+
 const githubApi = axios.create({
   baseURL: GITHUB_API_URL,
 });
@@ -17,8 +18,7 @@ githubApi.interceptors.request.use((config) => {
     return config;
   }, (error) => {
     return Promise.reject(error);
-  }
-);
+  });
 
 export const fetchRepositories = async (): Promise<RepositoryItem[]> => {
   try {
@@ -58,7 +58,7 @@ export const creareRepository = async (repo: RepositoryItem): Promise<void> => {
 
 export const getUserInfo = async (): Promise<UserInfo | null> => {
   try {
-    const response = await githubApi.get("/user");
+    const response = await githubApi.get('/user');
     return response.data;
   } catch (error) {
     console.error("Error fetching user info:", error);

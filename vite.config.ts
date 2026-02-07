@@ -10,6 +10,10 @@ export default defineConfig({
     react(),
     legacy()
   ],
+
+  build: {
+    chunkSizeWarningLimit: 10240, // 10 MB
+  },
   test: {
     globals: true,
     environment: 'jsdom',

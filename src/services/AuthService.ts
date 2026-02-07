@@ -34,7 +34,7 @@ class AuthService {
     const token = this.getToken();
     const username = this.getUsername();
     if (token && username) {
-      return "Basic " + btoa(`${username}:${token}`);
+      return 'Basic ' + btoa(`${username}:${token}`);
     }
     return null;
   }
