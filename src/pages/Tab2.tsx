@@ -20,33 +20,33 @@ const Tab2: React.FC = () => {
   const [loading, setLoading]= useState(false);
   const history = useHistory();
 
-  const repoFormData : RepositoryItem ={
+  const repoFormData : RepositoryItem = {
     name: '',
     description: '',
     imageUrl: null,
     owner: null,
     language: null,
   };
-  const setRepoName = (value: string) =>{
+  const setRepoName = (value: string) => {
     repoFormData.name =  value;
    }
 
   
-  function setDescription(value: string): void {
-    repoFormData.description=value;;
+  const setDescription = (value: string) => {
+    repoFormData.description = value;
   }
 
-  const saveRepo = ()=>{
+  const saveRepo = () => {
     setLoading(true);
-    console.log('Guardando repositorio:', repoFormData);
-    if(repoFormData.name.trim()==''){
-      alert('El nombre del repositorio es obligatorio');
+    console.log("Guardando repositorio:", repoFormData);
+    if(repoFormData.name.trim() === '') {
+      alert("El nombre del repositorio es obligatorio");
       return;
     }
-    creareRepository(repoFormData).then(() =>{
+    creareRepository(repoFormData).then(() => {
       history.push ('/tab1');
-    }).catch((error)=>{
-      console.error('Error al crear el repositorio:',error);
+    }).catch((error) => {
+      console.error("Error al crear el repositorio:",error);
       alert('Error al crear el repositorio');
 
     }). finally(()=>{
@@ -77,7 +77,7 @@ const Tab2: React.FC = () => {
             fill="outline"
             placeholder="android-project"
             value={repoFormData.name}
-            onIonChange={e =>  setRepoName(e.detail.value!)}
+            onIonChange={(e) =>  setRepoName(e.detail.value!)}
             ></IonInput>
             <IonTextarea    
             className="form-field"
@@ -85,12 +85,12 @@ const Tab2: React.FC = () => {
             labelPlacement="floating"
             fill="outline"
             placeholder="Descripción del repositorio"
-            value={repoFormData.description}
-            onIonChange={e => setDescription(e.detail.value!)}
             rows={6}
             autoGrow
-            ></IonTextarea>
-          <IonButton expand="block" className="form-field"onClick={saveRepo}>Guardar</IonButton>
+            value={repoFormData.description}
+            onIonChange={(e) => setDescription(e.detail.value!)}
+          ></IonTextarea>
+          <IonButton expand="block" className="form-field" onClick={saveRepo}>Guardar</IonButton>
         </div>
         <LoadingSpinner isOpen={loading} />
       </IonContent>
